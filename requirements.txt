@@ -1,0 +1,4 @@
+Appium-Python-Client
+pytest
+allure-pytest
+pytest-xdist        # optional, for parallel tests
