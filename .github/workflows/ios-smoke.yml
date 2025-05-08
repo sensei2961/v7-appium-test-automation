@@ -1,0 +1,34 @@
+name: Run iOS Appium Smoke Tests
+
+on:
+  workflow_dispatch:  # Allows external triggers
+
+jobs:
+  ios-tests:
+    runs-on: macos-13
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python & Appium
+        run: |
+          brew install node
+          npm install -g appium
+          pip install -r requirements.txt
+          nohup appium &
+
+      - name: Boot Simulator and install app
+        run: |
+          xcrun simctl boot "iPhone 14"
+          open -a Simulator
+          xcrun simctl install booted ./YourApp.app  # Make sure this is added/downloaded before test
+
+      - name: Run Appium tests
+        run: pytest tests/smoke --maxfail=1
+
+      - name: Archive results
+        uses: actions/upload-artifact@v3
+        with:
+          name: smoke-report
+          path: ./reports
